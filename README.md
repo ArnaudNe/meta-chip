@@ -54,28 +54,29 @@ The following tutorial is useful to start building your own Yocto project and lo
 
 Clone sources:
 
-	git clone --branch fido git://git.yoctoproject.org/poky.git ~/yocto/poky
-	git clone --branch fido git://git.openembedded.org/meta-openembedded ~/yocto/meta-openembedded
-	git clone https://github.com/myfreescalewebpage/meta-chip.git ~/yocto/meta-chip
+	mkdir -p ~/development/yocto/images
+	git clone --branch morty git://git.yoctoproject.org/poky.git ~/development/yocto/poky
+	git clone --branch morty git://git.openembedded.org/meta-openembedded ~/development/yocto/meta-openembedded
+	git clone --branch morty https://github.com/ArnaudNe/meta-chip.git ~/development/yocto/meta-chip
 
 Get and build tools:
 
-	git clone http://github.com/NextThingCo/sunxi-tools ~/yocto/sunxi-tools
-	cd ~/yocto/sunxi-tools
-	make
-	rm /usr/local/bin/fel
-	sudo ln -s $PWD/fel /usr/local/bin/fel
-	git clone --branch yocto https://github.com/myfreescalewebpage/CHIP-tools ~/yocto/chip-tools
-	mkdir -p ~/yocto/images
+	cd ~/development/
+	git clone https://github.com/NextThingCo/CHIP-SDK CHIP-SDK
+	cd CHIP-SDK
+	git checkout --track origin/by/4.4multi
+	./setup_ubuntu1404.sh
+	cd CHIP-tools
+	git checkout --track origin/by/4.4multi
 
 **_3- Configure build (once)_**
 
 Setup environnement:
 
-	cd ~/yocto
-	source poky/oe-init-build-env
+	cd ~/development/yocto/
+	source poky/oe-init-build-env build-chip
 
-Add layers to the configuration file ~/yocto/build/conf/bblayers.conf:
+Add layers to the configuration file ~/development/yocto/build-chip/conf/bblayers.conf:
 
 	BBLAYERS ?= " \
 	  ${TOPDIR}/../poky/meta \
@@ -87,36 +88,38 @@ Add layers to the configuration file ~/yocto/build/conf/bblayers.conf:
 	  ${TOPDIR}/../meta-chip \
 	"
 
-Set machine in the configuration file ~/yocto/build/conf/local.conf:
+Set machine in the configuration file ~/development/yocto/build-chip/conf/local.conf:
 
 	MACHINE ??= "chip"
 
 **_4- Restore environnement (when restarting the development machine)_**
 
-Restore environnement:
+Restore environnement :
 
-        cd ~/yocto
-        source poky/oe-init-build-env
+        cd ~/development/yocto
+        source poky/oe-init-build-env build-chip
 
 **_5- Build_**
 
-Build minimal image and u-boot:
+Build minimal image and u-boot :
 
-	cd ~/yocto/build
+	cd ~/development/yocto/build-chip
 	bitbake chip-image-minimal
 
 **_6- Flash target_**
 
-Copy files in the images directory and flash the target (replace chip-image-minimal-chip.ubi by the wanted rootfs if you have build another image):
+Create NAND images as following :
 
-	cp ~/yocto/build/tmp/deploy/images/chip/chip-image-minimal-chip.ubi ~/yocto/images/rootfs.ubi
-	cp ~/yocto/build/tmp/deploy/images/chip/sunxi-spl.bin ~/yocto/images
-	cp ~/yocto/build/tmp/deploy/images/chip/sunxi-spl-with-ecc.bin ~/yocto/images
-	cp ~/yocto/build/tmp/deploy/images/chip/u-boot-dtb.bin ~/yocto/images
-	cd ~/yocto/chip-tools/
-	sudo BUILDROOT_OUTPUT_DIR=~/yocto ./chip-fel-flash.sh
+	cd ~/development/CHIP-SDK/CHIP-tools
+	
+	sudo ./chip-create-nand-images.sh ~/development/yocto/build-chip/tmp/work/chip-poky-linux-gnueabi/u-boot-chip/2016.01+gitAUTOINC+ccd1de00d5-r0/build ~/development/yocto/build-chip/tmp/deploy/images/chip/chip-image-minimal-chip-20170124225031.rootfs.tar ~/development/yocto/images
+	
+	sudo chown -R $USER:$USER ~/development/yocto/images
 
-Then start the target in FEL mode (put a jumper between the FEL pin and GND and then power ON). Logs are displayed to check the progression and the verification of the flashing procedure.
+We now are ready to flash images. Start the target in FEL mode (put a jumper between the FEL pin and GND and then power ON) and execute the following :
+
+	./chip-flash-nand-images ~/development/yocto/images
+
 At the end of the flashing procedure, the target is powered off. Disconnect the power supply and remove the FEL jumper. Restart the target. A console is available on the UART pins of the board and another one on the USB OTG cable (you should see a new tty device when connecting C.H.I.P. to your computer). Speed is 115200 for both consoles. Login is 'root' with no password.
 
 
@@ -132,6 +135,7 @@ References
 --
 
 * https://github.com/agherzan/meta-chip
+* https://github.com/texierp/meta-chip
 * https://github.com/soderstrom-rikard/meta-sunxi/tree/sun5i-r8-chip
 * https://bbs.nextthing.co/t/yocto-project-an-initial-teaser-release/833
 * https://bbs.nextthing.co/t/flash-chip-using-ubuntu-on-usb/2401
