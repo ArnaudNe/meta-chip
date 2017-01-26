@@ -93,8 +93,8 @@ Set machine in the configuration file ~/development/yocto/build-chip/conf/local.
 
 Restore environnement :
 
-        cd ~/development/yocto
-        source poky/oe-init-build-env build-chip
+	cd ~/development/yocto
+	source poky/oe-init-build-env build-chip
 
 **_5- Build_**
 
@@ -111,7 +111,6 @@ Create NAND images as following :
 	
 	sudo ./chip-create-nand-images.sh ~/development/yocto/build-chip/tmp/work/chip-poky-linux-gnueabi/u-boot-chip/2016.01*/build ~/development/yocto/build-chip/tmp/deploy/images/chip/chip-image-minimal-chip.tar ~/development/yocto/images
 
-	
 	sudo chown -R $USER:$USER ~/development/yocto/images
 
 We now are ready to flash images. Start the target in FEL mode (put a jumper between the FEL pin and GND and then power ON) and execute the following :
