@@ -80,13 +80,13 @@ Add layers to the configuration file ~/development/yocto/build-chip/conf/bblayer
 
 	BBLAYERS ?= " \
 	  ${TOPDIR}/../poky/meta \
-	  ${TOPDIR}/../poky/meta-yocto \
+	  ${TOPDIR}/../poky/meta-poky \
 	  ${TOPDIR}/../poky/meta-yocto-bsp \
 	  ${TOPDIR}/../meta-openembedded/meta-oe \
 	  ${TOPDIR}/../meta-openembedded/meta-python \
 	  ${TOPDIR}/../meta-openembedded/meta-networking \
 	  ${TOPDIR}/../meta-chip \
-	"
+  	"
 
 Set machine in the configuration file ~/development/yocto/build-chip/conf/local.conf:
 
