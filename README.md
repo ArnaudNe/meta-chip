@@ -1,3 +1,5 @@
+# Please see [morty](https://github.com/ArnaudNe/meta-chip/tree/morty) branch
+
 meta-chip
 ==
 
