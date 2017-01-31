@@ -62,12 +62,9 @@ Clone sources:
 Get and build tools:
 
 	cd ~/development/
-	git clone https://github.com/NextThingCo/CHIP-SDK CHIP-SDK
+	git clone https://github.com/ArnaudNe/CHIP-SDK CHIP-SDK
 	cd CHIP-SDK
-	git checkout --track origin/by/4.4multi
 	./setup_ubuntu1404.sh
-	cd CHIP-tools
-	git checkout --track origin/by/4.4multi
 
 **_3- Configure build (once)_**
 
@@ -96,8 +93,8 @@ Set machine in the configuration file ~/development/yocto/build-chip/conf/local.
 
 Restore environnement :
 
-        cd ~/development/yocto
-        source poky/oe-init-build-env build-chip
+	cd ~/development/yocto
+	source poky/oe-init-build-env build-chip
 
 **_5- Build_**
 
@@ -112,13 +109,13 @@ Create NAND images as following :
 
 	cd ~/development/CHIP-SDK/CHIP-tools
 	
-	sudo ./chip-create-nand-images.sh ~/development/yocto/build-chip/tmp/work/chip-poky-linux-gnueabi/u-boot-chip/2016.01+gitAUTOINC+ccd1de00d5-r0/build ~/development/yocto/build-chip/tmp/deploy/images/chip/chip-image-minimal-chip-20170124225031.rootfs.tar ~/development/yocto/images
-	
+	sudo ./chip-create-nand-images.sh ~/development/yocto/build-chip/tmp/work/chip-poky-linux-gnueabi/u-boot-chip/2016.01*/build ~/development/yocto/build-chip/tmp/deploy/images/chip/chip-image-minimal-chip.tar ~/development/yocto/images
+
 	sudo chown -R $USER:$USER ~/development/yocto/images
 
 We now are ready to flash images. Start the target in FEL mode (put a jumper between the FEL pin and GND and then power ON) and execute the following :
 
-	./chip-flash-nand-images ~/development/yocto/images
+	./chip-flash-nand-images.sh ~/development/yocto/images
 
 At the end of the flashing procedure, the target is powered off. Disconnect the power supply and remove the FEL jumper. Restart the target. A console is available on the UART pins of the board and another one on the USB OTG cable (you should see a new tty device when connecting C.H.I.P. to your computer). Speed is 115200 for both consoles. Login is 'root' with no password.
 
